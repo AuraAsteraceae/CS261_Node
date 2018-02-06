@@ -356,6 +356,8 @@ function updateUser(req, res, next)
 						response.avatar = avatar;
 					}
 					res.send(JSON.stringify(response));
+					
+					next();
 				}
 				else
 				{
@@ -377,6 +379,7 @@ function updateUser(req, res, next)
 					"avatar": avatar
 				}
 				res.send(JSON.stringify(response));
+				next();
 			}
 			else
 			{
@@ -387,6 +390,7 @@ function updateUser(req, res, next)
 					"avatar": avatar
 				}
 				res.send(JSON.stringify(response));
+				next();
 			}
 		}
 	}
