@@ -3,7 +3,7 @@ let express = require('express');
 let routes = require('./routes/routes.js');
 
 //Fields
-let port = 8124;
+let port = 8123;
 
 //Initialize the web server (with express)
 let app = express();
