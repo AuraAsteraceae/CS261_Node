@@ -243,10 +243,18 @@ function getUser(req, res, next)
 					"avatar": user.avatar
 				}
 			}
+			res.send(JSON.stringify(response));
+			
+			next();
 		}
 		else
 		{
-			//Another fail here.
+			let response =
+			{
+				"status": "fail",
+				"reason": "Error: user does not exist."
+			}
+			res.send(JSON.stringify(response));
 		}
 	}
 }
@@ -369,6 +377,7 @@ function updateUser(req, res, next)
 					"passwordChanged": false,
 					"avatar": avatar
 				}
+				res.send(JSON.stringify(response));
 			}
 		}
 	}
