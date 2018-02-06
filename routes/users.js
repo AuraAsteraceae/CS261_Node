@@ -357,6 +357,15 @@ function updateUser(req, res, next)
 					}
 					res.send(JSON.stringify(response));
 				}
+				else
+				{
+					let response =
+					{
+						"status": "fail",
+						"id": "Forbidden"
+					}
+					res.send(JSON.stringify(response));
+				}
 			}
 			else if (avatar)
 			{
