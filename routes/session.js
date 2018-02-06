@@ -16,8 +16,8 @@ let activeSessions = {};
 function startSession(id, callback)
 {
 	//console.log("StartSession Start");
-	if (!findSession(id))
-	{
+	//if (!findSession(id))
+	//{
 		let sessionID = crypto.randomBytes(tokenSize).toString("hex");
 		let token = crypto.randomBytes(tokenSize).toString("hex");
 		//Implement this properly later.
@@ -27,7 +27,12 @@ function startSession(id, callback)
 		activeSessions[id] = session;
 		console.log("StartSession Callback");
 		process.nextTick( () => {callback(activeSessions[id]); } );
-	}
+	//}
+	//else
+	//{
+		//Session already exists but make a new one cuz dumb.
+		
+	//}
 	//console.log("StartSession End");
 }
 

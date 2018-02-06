@@ -101,13 +101,13 @@ function loginUser(req, res)
 	let username = checkField(req, 'username');
 	let password = checkField(req, 'password');
 	
-	//console.log("Login Attempted: " + username);
+	console.log("Login Attempted: " + username);
 	
 	let existingUser = userAccounts.get(username);
 
 	if (!existingUser)
 	{
-		//console.log("Session failed with: " + username + " User did not exist");
+		console.log("Session failed with: " + username + " User did not exist");
 		let response =
 		{
 			"status": "fail",
@@ -117,8 +117,8 @@ function loginUser(req, res)
 	}
 	else if (existingUser.password !== password)
 	{
-		//console.log("Session failed with: " + username + " Wrong password");
-		//console.log(existingUser.password + ", passed in: " + password);
+		console.log("Session failed with: " + username + " Wrong password");
+		console.log(existingUser.password + ", passed in: " + password);
 		let response =
 		{
 			"status": "fail",
@@ -128,7 +128,7 @@ function loginUser(req, res)
 	}
 	else
 	{
-		//console.log("Session start attempt with: " + username);
+		console.log("Session start attempt with: " + username);
 		userSessions.start(existingUser.id, function(newSession)
 		{
 			console.log("Session started with: " + username);
@@ -144,9 +144,10 @@ function loginUser(req, res)
 				}
 			}
 			res.send(JSON.stringify(response));
+			console.log("Login Success");
 		});
 	}
-	//console.log("Login user function exited.");
+	console.log("Login user function exited.");
 }
 
 function logoutUser(req, res, next)
@@ -309,7 +310,7 @@ function findUser(req, res, next)
 
 function updateUser(req, res, next)
 {
-	//console.log("UpdateUser Entered.");
+	console.log("UpdateUser Entered.");
 	let id = checkField(req, 'id');
 	let oldPassword = checkField(req, 'oldPassword');
 	let newPassword = checkField(req, 'newPassword');
@@ -322,9 +323,13 @@ function updateUser(req, res, next)
 		let response =
 		{
 			"status": "fail",
-			"id": "Forbidden"
+			"reason":
+			{
+				"id": "Forbidden"
+			}
 		}
 		res.send(JSON.stringify(response));
+		console.log("no user found");
 	}
 	else
 	{
@@ -334,9 +339,13 @@ function updateUser(req, res, next)
 			let response =
 			{
 				"status": "fail",
-				"id": "Forbidden"
+				"reason":
+				{
+					"id": "Forbidden"
+				}
 			}
 			res.send(JSON.stringify(response));
+			console.log("no session found");
 		}
 		else
 		{
@@ -348,25 +357,37 @@ function updateUser(req, res, next)
 					let response =
 					{
 						"status": "success",
-						"passwordChanged": true
+						"data":
+						{
+							"passwordChanged": true,
+							"avatar": user.avatar
+						}
 					}
 					if (avatar)
 					{
 						user.avatar = avatar;
-						response.avatar = avatar;
+						response.data.avatar = avatar;
+						console.log("REEEE");
 					}
+					console.log("Oi this better print");
+					console.log(JSON.stringify(response));
 					res.send(JSON.stringify(response));
-					
-					next();
+					console.log("Success");
+					//next();
 				}
 				else
 				{
 					let response =
 					{
 						"status": "fail",
-						"id": "Forbidden"
+						"reason":
+						{
+							"id": "Forbidden",
+							"oldPassword": "Forbidden"
+						}
 					}
 					res.send(JSON.stringify(response));
+					console.log("Incorrect old password");
 				}
 			}
 			else if (avatar)
@@ -375,27 +396,35 @@ function updateUser(req, res, next)
 				let response =
 				{
 					"status": "success",
-					"passwordChanged": false,
-					"avatar": avatar
+					"data":
+					{
+						"passwordChanged": false,
+						"avatar": avatar
+					}
 				}
 				res.send(JSON.stringify(response));
-				next();
+				console.log("Just avatar change");
+				//next();
 			}
 			else
 			{
 				let response =
 				{
 					"status": "success",
-					"passwordChanged": false,
-					"avatar": avatar
+					"data":
+					{
+						"passwordChanged": false,
+						"avatar": avatar
+					}
 				}
 				res.send(JSON.stringify(response));
-				next();
+				console.log("Nothing changed");
+				//next();
 			}
 		}
 	}
 	
-	//console.log("UpdateUser Exited.");
+	console.log("UpdateUser Exited.");
 }
 
 module.exports.register = function(app, root)
