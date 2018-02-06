@@ -77,6 +77,15 @@ function createUser(req, res)
 				res.send(JSON.stringify(response));
 			});
 		}
+		else
+		{
+			let response =
+			{
+				"status": "fail",
+				"reason": "User already exists"
+			}
+			res.send(JSON.stringify(response));
+		}
 		//console.log("User created: " + username);
 		return;
 	}
