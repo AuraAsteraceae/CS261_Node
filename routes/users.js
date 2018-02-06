@@ -82,7 +82,10 @@ function createUser(req, res)
 			let response =
 			{
 				"status": "fail",
-				"reason": "User already exists"
+				"reason": 
+				{
+					"username": "Already taken"
+				}
 			}
 			res.send(JSON.stringify(response));
 		}
@@ -108,7 +111,7 @@ function loginUser(req, res)
 		let response =
 		{
 			"status": "fail",
-			"reason": "incorrect username/password"
+			"reason": "Username/password mismatch"
 		}
 		res.send(JSON.stringify(response));
 	}
@@ -119,7 +122,7 @@ function loginUser(req, res)
 		let response =
 		{
 			"status": "fail",
-			"reason": "incorrect username/password"
+			"reason": "Username/password mismatch"
 		}
 		res.send(JSON.stringify(response));
 	}
@@ -133,9 +136,12 @@ function loginUser(req, res)
 			let response =
 			{
 				"status": "success",
-				"id": existingUser.id,
-				"session": newSession.id,
-				"token": newSession.token
+				"data":
+				{
+					"id": existingUser.id,
+					"session": newSession.id,
+					"token": newSession.token
+				}
 			}
 			res.send(JSON.stringify(response));
 		});
@@ -206,6 +212,45 @@ function logoutUser(req, res, next)
 	//console.log("Logout user function exited.");
 }
 
+function getUser(req, res, next)
+{
+	let id = checkField(req, 'id');
+
+	if (!isValid(id))
+	{
+		let response =
+		{
+			"status": "fail",
+			"reason":
+			{
+				"id": "User does not exist."
+			}
+		}
+		res.send(JSON.stringify(response));
+	}
+	else
+	{
+		let user = userAccounts.getByID(id);
+		if (user)
+		{
+			let response =
+			{
+				"status": "success",
+				"data":
+				{
+					"id": user.id,
+					"username": user.username,
+					"avatar": user.avatar
+				}
+			}
+		}
+		else
+		{
+			//Another fail here.
+		}
+	}
+}
+
 function findUser(req, res, next)
 {
 	//console.log("FindUser Entered.");
@@ -230,9 +275,12 @@ function findUser(req, res, next)
 			let response =
 			{
 				"status": "success",
-				"id": user.id,
-				"username": user.username,
-				"avatar": user.avatar
+				"data":
+				{
+					"id": user.id,
+					"username": user.username,
+					"avatar": user.avatar
+				}
 			}
 			res.send(JSON.stringify(response));
 			
@@ -313,6 +361,15 @@ function updateUser(req, res, next)
 				}
 				res.send(JSON.stringify(response));
 			}
+			else
+			{
+				let response =
+				{
+					"status": "success",
+					"passwordChanged": false,
+					"avatar": avatar
+				}
+			}
 		}
 	}
 	
@@ -324,7 +381,7 @@ module.exports.register = function(app, root)
 	app.post(root + 'create', createUser);
 	app.get(root + 'login', loginUser);
 	app.get(root + 'logout', logoutUser);
-	//app.get(root + ':id/get', getUser);
+	app.get(root + ':id/get', getUser);
 	app.get(root + 'find/:username', findUser);
 	app.post(root + ':id/update', updateUser);
 }
