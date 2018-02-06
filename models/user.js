@@ -48,7 +48,7 @@ module.exports.get = function(username)
 	}
 }
 
-module.exports.getById = function(uID)
+module.exports.getByID = function(uID)
 {
 	let found = userAccountID[uID];
 	if (found)
