@@ -316,7 +316,7 @@ function updateUser(req, res, next)
 	let avatar = checkField(req, 'avatar');
 	//user -> id
 	//session -> token && session
-	let user = userAccounts.getById(id);
+	let user = userAccounts.getByID(id);
 	if (!user)
 	{
 		let response =
