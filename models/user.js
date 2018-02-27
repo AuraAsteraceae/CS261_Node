@@ -1,3 +1,8 @@
+//Includes
+const redis = require('redis');
+const client = redis.createClient();
+let async = require('async');
+
 //ID Generation
 let crypto = require("crypto");
 let idSize = 8;
@@ -14,53 +19,66 @@ class UserAccount
 	}
 }
 
-//This defines an empty array object which will take ANY data type.
-let userAccountStorage = {};
-let userAccountID = {};
-
 function checkUser(username)
 {
-	let found = userAccountStorage[username];
-	if (found)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  client.hgetall(username, (err, found) =>
+  {
+    if (err) console.log("error in checkUser: " + err);
+    if (found) return true;
+    else return false;
+  });
+}
+
+function checkField(req, name)
+{
+  if('accountKey' in req && name in req.accountKey) 
+    return req.accountKey[name];
+  return null;
+}
+
+function getObjectFromInitialKey(t1Key, callback)
+{
+  client.hgetall(t1Key, (err, key) =>
+  {
+    if (key && key.accountKey)
+    {
+      client.hgetall(key.accountKey, function(err, object)
+      {
+        console.log(object);
+        if (err)
+          console.log("HGetAll from initial key failed");
+        callback(err, object);
+      });
+    }
+    else
+      callback(null);
+  });
 }
 
 //This function looks for a user, given a username in the database.
 //If one is present, returns it.
-module.exports.get = function(username)
+module.exports.get = function(username, callback)
 {
-	let found = userAccountStorage[username];
-	if (found)
-	{
-		//console.log("Get: Found a user: " + username);
-		return found;
-	}
-	else
-	{
-		//console.log("Get: User not found: " + username);
-		return null;
-	}
+	getObjectFromInitialKey(username, (err, user) => {
+    if (err) console.log("error in user.get: " + err);
+    callback(err, user);
+  });
 }
 
-module.exports.getByID = function(uID)
+function addUser(username, id, object, callback)
 {
-	let found = userAccountID[uID];
-	if (found)
-	{
-		//console.log("Get: Found an ID: " + uID);
-		return found;
-	}
-	else
-	{
-		//console.log("Get: ID not found: " + uID);
-		return null;
-	}
+  let key = username + id;
+  client.hmset(username, {accountKey: key}, (err, obj) => {
+    if (err) console.log("error in addUser(name): " + err);
+    });
+  client.hmset(id, {accountKey: key}, (err, obj) => {
+    if (err) console.log("error in addUser(id): " + err);
+  });
+  client.hmset(key, object, (err, obj) =>
+  {
+    if (err) console.log("error in addUser(object): " + err);
+    callback(err, obj);
+  });
 }
 
 //This function creates a user
@@ -74,11 +92,12 @@ module.exports.add = function(username, password, avatar, callback)
 		let id = crypto.randomBytes(idSize).toString("hex");
 		//Create the user account object
 		let userAccount = new UserAccount(username, password, id, avatar);
+    console.log("After user constructor");
 		//Add the username to the directory, using the id as a key.
-		userAccountStorage[username] = userAccount;
-		userAccountID[id] = userAccount;
-		//This will call back to the function.
-		process.nextTick( () => {callback(userAccountStorage[username]); } );
+		addUser(username, id, userAccount, (err, myNewUser) => {
+      if (err) console.log("error in user.add: " + err);
+      process.nextTick( () => { callback(myNewUser); } );
+    });
 	}
 	else
 		console.log("User " + username + "exists.");

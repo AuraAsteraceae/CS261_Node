@@ -2,6 +2,19 @@
 let express = require('express');
 let routes = require('./routes/routes.js');
 
+let cache = require('./utils/cache');
+let redis = require('redis');
+let client = redis.createClient(); //creates a new client.
+
+cache.connect({
+  'host': "127.0.0.1",
+  'port': "6379"
+  },
+  (err) => {
+   Console.log("Error: Connection error.")
+  }
+);
+
 //Fields
 let port = 8123;
 

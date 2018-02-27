@@ -59,38 +59,43 @@ function createUser(req, res)
 	else
 	{
 		//Add user to database.
-		let obj = userAccounts.get(username);
-		if (!obj)
-		{
-			//console.log("Attempt to create user");
-			userAccounts.add(username, password, avatar, function(userData)
-			{
-				let response =
-				{
-					"status": "success",
-					"data":
-					{
-						"id" : userData.id,
-						"username" : userData.username
-					}
-				}
-				res.send(JSON.stringify(response));
-			});
-		}
-		else
-		{
-			let response =
-			{
-				"status": "fail",
-				"reason": 
-				{
-					"username": "Already taken"
-				}
-			}
-			res.send(JSON.stringify(response));
-		}
+		userAccounts.get(username, (err, obj) => {
+  		if (!obj)
+  		{
+  			//console.log("Attempt to create user");
+  			userAccounts.add(username, password, avatar, function(err, userData)
+  			{
+          if (!err)
+          {
+            let response =
+  				  {
+  					  "status": "success",
+  					  "data":
+  					  {
+  						  "id" : userData.id,
+  						  "username" : userData.username
+  					  }
+  				  }
+  				  res.send(JSON.stringify(response));
+          }
+  		  });
+  		}
+  		else
+  		{
+  			let response =
+  			{
+  				"status": "fail",
+  				"reason": 
+  				{
+  					"username": "Already taken"
+  				}
+  			}
+  			res.send(JSON.stringify(response));
+  		}
 		//console.log("User created: " + username);
-		return;
+	  
+    });
+	return;
 	}
 
 	//console.log("Create User failed");
@@ -103,51 +108,52 @@ function loginUser(req, res)
 	
 	console.log("Login Attempted: " + username);
 	
-	let existingUser = userAccounts.get(username);
-
-	if (!existingUser)
-	{
-		console.log("Session failed with: " + username + " User did not exist");
-		let response =
-		{
-			"status": "fail",
-			"reason": "Username/password mismatch"
-		}
-		res.send(JSON.stringify(response));
-	}
-	else if (existingUser.password !== password)
-	{
-		console.log("Session failed with: " + username + " Wrong password");
-		console.log(existingUser.password + ", passed in: " + password);
-		let response =
-		{
-			"status": "fail",
-			"reason": "Username/password mismatch"
-		}
-		res.send(JSON.stringify(response));
-	}
-	else
-	{
-		console.log("Session start attempt with: " + username);
-		userSessions.start(existingUser.id, function(newSession)
-		{
-			console.log("Session started with: " + username);
-			
-			let response =
-			{
-				"status": "success",
-				"data":
-				{
-					"id": existingUser.id,
-					"session": newSession.id,
-					"token": newSession.token
-				}
-			}
-			res.send(JSON.stringify(response));
-			console.log("Login Success");
-		});
-	}
-	console.log("Login user function exited.");
+	userAccounts.get(username, (err, existingUser) => {
+    if (!existingUser)
+  	{
+  		console.log("Session failed with: " + username + " User did not exist");
+  		let response =
+  		{
+  			"status": "fail",
+  			"reason": "Username/password mismatch"
+  		}
+  		res.send(JSON.stringify(response));
+  	}
+  	else if (existingUser.password !== password)
+  	{
+  		console.log("Session failed with: " + username + " Wrong password");
+  		console.log(existingUser.password + ", passed in: " + password);
+  		let response =
+  		{
+  			"status": "fail",
+  			"reason": "Username/password mismatch"
+  		}
+  		res.send(JSON.stringify(response));
+  	}
+  	else
+  	{
+  		console.log("Session start attempt with: " + username);
+  		userSessions.start(existingUser.id, function(newSession)
+  		{
+  			console.log("Session started with: " + username);
+  			
+  			let response =
+  			{
+  				"status": "success",
+  				"data":
+  				{
+  					"id": existingUser.id,
+  					"session": newSession.id,
+  					"token": newSession.token
+  				}
+  			}
+  			res.send(JSON.stringify(response));
+		  	console.log("Login Success");
+	  	});
+  	}
+	
+  });
+  console.log("Login user function exited.");
 }
 
 function logoutUser(req, res, next)
@@ -231,32 +237,33 @@ function getUser(req, res, next)
 	}
 	else
 	{
-		let user = userAccounts.getByID(id);
-		if (user)
-		{
-			let response =
-			{
-				"status": "success",
-				"data":
-				{
-					"id": user.id,
-					"username": user.username,
-					"avatar": user.avatar
-				}
-			}
-			res.send(JSON.stringify(response));
-			
-			next();
-		}
-		else
-		{
-			let response =
-			{
-				"status": "fail",
-				"reason": "Error: user does not exist."
-			}
-			res.send(JSON.stringify(response));
-		}
+		userAccounts.get(id, (err, user) => {
+     	if (user)
+      {
+        let response =
+        {
+          "status": "success",
+          "data":
+          {
+            "id": user.id,
+            "username": user.username,
+            "avatar": user.avatar
+          }
+        }
+        res.send(JSON.stringify(response));
+             
+        next();
+      }
+      else
+      {
+        let response =
+        {
+          "status": "fail",
+          "reason": "Error: user does not exist."
+        }
+        res.send(JSON.stringify(response));
+      }
+    });
 	}
 }
 
@@ -278,32 +285,33 @@ function findUser(req, res, next)
 	}
 	else
 	{
-		let user = userAccounts.get(username);
-		if (user)
-		{
-			let response =
-			{
-				"status": "success",
-				"data":
-				{
-					"id": user.id,
-					"username": user.username,
-					"avatar": user.avatar
-				}
-			}
-			res.send(JSON.stringify(response));
-			
-			next();
-		}
-		else
-		{
-			let response =
-			{
-				"status": "fail",
-				"reason": "Error: user does not exist."
-			}
-			res.send(JSON.stringify(response));
-		}
+		userAccounts.get(username, (err, user) => {
+  		if (user)
+  		{
+  			let response =
+  			{
+  				"status": "success",
+  				"data":
+  				{
+  					"id": user.id,
+  					"username": user.username,
+  					"avatar": user.avatar
+  				}
+  			}
+  			res.send(JSON.stringify(response));
+  			
+  			next();
+  		}
+  		else
+  		{
+  			let response =
+  			{
+  				"status": "fail",
+  				"reason": "Error: user does not exist."
+  			}
+  			res.send(JSON.stringify(response));
+  		}
+    });
 	}
 	//console.log("FindUser Exited.");
 }
@@ -317,112 +325,113 @@ function updateUser(req, res, next)
 	let avatar = checkField(req, 'avatar');
 	//user -> id
 	//session -> token && session
-	let user = userAccounts.getByID(id);
-	if (!user)
-	{
-		let response =
-		{
-			"status": "fail",
-			"reason":
-			{
-				"id": "Forbidden"
-			}
-		}
-		res.send(JSON.stringify(response));
-		console.log("no user found");
-	}
-	else
-	{
-		let session = userSessions.find(id);
-		if (!session)
-		{
-			let response =
-			{
-				"status": "fail",
-				"reason":
-				{
-					"id": "Forbidden"
-				}
-			}
-			res.send(JSON.stringify(response));
-			console.log("no session found");
-		}
-		else
-		{
-			if (oldPassword)
-			{
-				if (oldPassword === user.password)
-				{
-					user.password = newPassword;
-					let response =
-					{
-						"status": "success",
-						"data":
-						{
-							"passwordChanged": true,
-							"avatar": user.avatar
-						}
-					}
-					if (avatar)
-					{
-						user.avatar = avatar;
-						response.data.avatar = avatar;
-						console.log("REEEE");
-					}
-					console.log("Oi this better print");
-					console.log(JSON.stringify(response));
-					res.send(JSON.stringify(response));
-					console.log("Success");
-					//next();
-				}
-				else
-				{
-					let response =
-					{
-						"status": "fail",
-						"reason":
-						{
-							"id": "Forbidden",
-							"oldPassword": "Forbidden"
-						}
-					}
-					res.send(JSON.stringify(response));
-					console.log("Incorrect old password");
-				}
-			}
-			else if (avatar)
-			{
-				user.avatar = avatar;
-				let response =
-				{
-					"status": "success",
-					"data":
-					{
-						"passwordChanged": false,
-						"avatar": avatar
-					}
-				}
-				res.send(JSON.stringify(response));
-				console.log("Just avatar change");
-				//next();
-			}
-			else
-			{
-				let response =
-				{
-					"status": "success",
-					"data":
-					{
-						"passwordChanged": false,
-						"avatar": avatar
-					}
-				}
-				res.send(JSON.stringify(response));
-				console.log("Nothing changed");
-				//next();
-			}
-		}
-	}
+	userAccounts.get(id, (err, user) => {
+    	if (!user)
+  	{
+  		let response =
+  		{
+  			"status": "fail",
+  			"reason":
+  			{
+  				"id": "Forbidden"
+  			}
+  		}
+  		res.send(JSON.stringify(response));
+  		console.log("no user found");
+  	}
+  	else
+  	{
+  		let session = userSessions.find(id);
+  		if (!session)
+  		{
+  			let response =
+  			{
+  				"status": "fail",
+  				"reason":
+  				{
+  					"id": "Forbidden"
+  				}
+  			}
+  			res.send(JSON.stringify(response));
+  			console.log("no session found");
+  		}
+  		else
+  		{
+  			if (oldPassword)
+  			{
+  				if (oldPassword === user.password)
+  				{
+  					user.password = newPassword;
+  					let response =
+  					{
+  						"status": "success",
+  						"data":
+  						{
+  							"passwordChanged": true,
+  							"avatar": user.avatar
+  						}
+  					}
+  					if (avatar)
+  					{
+  						user.avatar = avatar;
+  						response.data.avatar = avatar;
+  						console.log("REEEE");
+  					}
+  					console.log("Oi this better print");
+  					console.log(JSON.stringify(response));
+  					res.send(JSON.stringify(response));
+  					console.log("Success");
+  					//next();
+  				}
+  				else
+  				{
+  					let response =
+  					{
+  						"status": "fail",
+  						"reason":
+  						{
+  							"id": "Forbidden",
+  							"oldPassword": "Forbidden"
+  						}
+  					}
+	  				res.send(JSON.stringify(response));
+  					console.log("Incorrect old password");
+  				}
+  			}
+  			else if (avatar)
+  			{
+  				user.avatar = avatar;
+  				let response =
+  				{
+  					"status": "success",
+  					"data":
+  					{
+  						"passwordChanged": false,
+  						"avatar": avatar
+  					}
+  				}
+  				res.send(JSON.stringify(response));
+  				console.log("Just avatar change");
+  				//next();
+  			}
+  			else
+  			{
+  				let response =
+  				{
+  					"status": "success",
+  					"data":
+  					{
+  						"passwordChanged": false,
+  						"avatar": avatar
+  					}
+  				}
+  				res.send(JSON.stringify(response));
+  				console.log("Nothing changed");
+  				//next();
+	  		}
+  		}
+  	}
+  });
 	
 	console.log("UpdateUser Exited.");
 }
