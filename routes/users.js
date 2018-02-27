@@ -367,6 +367,9 @@ function updateUser(req, res, next)
         {
           if (oldPassword)
           {
+            console.log("Info: user.password = " + user.password);
+            console.log("Info: oldPassword = " + oldPassword);
+            console.log("Info: newPassword = " + newPassword); 
             if (oldPassword === user.password)
             {
               user.password = newPassword;
