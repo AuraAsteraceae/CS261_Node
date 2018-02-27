@@ -103,7 +103,7 @@ module.exports.add = function(username, password, avatar, callback)
     client.hmset(id, {accountKey: key}, (err, obj) => {
       if (err) console.log("error in addUser(id): " + err);
     });
-    client.hmset(key, object, (err, obj) =>
+    client.hmset(key, userAccount, (err, obj) =>
     {
       if (err) console.log("error in addUser(object): " + err);
       //console.log("AddUser Right before callback");
