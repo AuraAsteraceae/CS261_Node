@@ -330,7 +330,9 @@ function updateUser(req, res, next)
   let avatar = checkField(req, 'avatar');
   //user -> id
   //session -> token && session
-  userAccounts.get(id, (err, user) => {
+  userAccounts.get(id, (err, user) => 
+  {
+    if (err) console.log("Error: updateUser: userAccounts.get " + err); 
     if (!user)
     {
       let response =
@@ -346,92 +348,95 @@ function updateUser(req, res, next)
     }
     else
     {
-      let session = userSessions.find(id);
-      if (!session)
+      userSessions.find(id, (err, session) => 
       {
-        let response =
+        if (!session)
         {
-          "status": "fail",
-          "reason":
+          let response =
           {
-            "id": "Forbidden"
+            "status": "fail",
+            "reason":
+            {
+              "id": "Forbidden"
+            }
           }
+          res.send(JSON.stringify(response));
+          console.log("Error: updateUser: no session found");
         }
-        res.send(JSON.stringify(response));
-        console.log("Error: updateUser: no session found");
-      }
-      else
-      {
-        if (oldPassword)
+        else
         {
-          if (oldPassword === user.password)
+          if (oldPassword)
           {
-            user.password = newPassword;
+            if (oldPassword === user.password)
+            {
+              user.password = newPassword;
+              let response =
+              {
+                "status": "success",
+                "data":
+                {
+                  "passwordChanged": true,
+                  "avatar": user.avatar
+                }
+              }
+              if (avatar)
+              {
+                user.avatar = avatar;
+                response.data.avatar = avatar;
+              }
+              res.send(JSON.stringify(response));
+              console.log("Success");
+              //next();
+            }
+            else
+            {
+              let response =
+              {
+                "status": "fail",
+                "reason":
+                {
+                  "id": "Forbidden",
+                  "oldPassword": "Forbidden"
+                }
+              }
+              res.send(JSON.stringify(response));
+              console.log("Error: updateUser: Incorrect old password");
+            }
+          }
+          else if (avatar)
+          {
+            user.avatar = avatar;
             let response =
             {
               "status": "success",
               "data":
               {
-                "passwordChanged": true,
-                "avatar": user.avatar
+                "passwordChanged": false,
+                "avatar": avatar
               }
             }
-            if (avatar)
-            {
-              user.avatar = avatar;
-              response.data.avatar = avatar;
-            }
             res.send(JSON.stringify(response));
-            console.log("Success");
+            console.log("Info: updateUser: Just avatar change");
             //next();
           }
           else
           {
             let response =
             {
-              "status": "fail",
-              "reason":
+              "status": "success",
+              "data":
               {
-                "id": "Forbidden",
-                "oldPassword": "Forbidden"
+                "passwordChanged": false,
+                "avatar": avatar
               }
             }
             res.send(JSON.stringify(response));
-            console.log("Error: updateUser: Incorrect old password");
+            console.log("Info: updateUser: Nothing changed");
+            //next();
           }
         }
-        else if (avatar)
-        {
-          user.avatar = avatar;
-          let response =
-          {
-            "status": "success",
-            "data":
-            {
-              "passwordChanged": false,
-              "avatar": avatar
-            }
-          }
-          res.send(JSON.stringify(response));
-          console.log("Info: updateUser: Just avatar change");
-          //next();
-        }
-        else
-        {
-          let response =
-          {
-            "status": "success",
-            "data":
-            {
-              "passwordChanged": false,
-              "avatar": avatar
-            }
-          }
-          res.send(JSON.stringify(response));
-          console.log("Info: updateUser: Nothing changed");
-          //next();
-        }
-      }
+      });
+      
     }
   });
   

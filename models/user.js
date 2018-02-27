@@ -64,22 +64,6 @@ module.exports.get = function(username, callback)
   });
 }
 
-function addUser(username, id, object, callback)
-{
-  let key = username + id;
-  client.hmset(username, {accountKey: key}, (err, obj) => {
-    if (err) console.log("error in addUser(name): " + err);
-    });
-  client.hmset(id, {accountKey: key}, (err, obj) => {
-    if (err) console.log("error in addUser(id): " + err);
-  });
-  client.hmset(key, object, (err, obj) =>
-  {
-    if (err) console.log("error in addUser(object): " + err);
-    callback(err, obj);
-  });
-}
-
 //This function creates a user
 module.exports.add = function(username, password, avatar, callback)
 {
