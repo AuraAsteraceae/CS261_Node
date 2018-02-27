@@ -44,14 +44,14 @@ function getObjectFromInitialKey(t1Key, callback)
     {
       client.hgetall(key.accountKey, function(err, object)
       {
-        console.log(object);
+        console.log("That long ass function" + key.accountKey);
         if (err)
           console.log("HGetAll from initial key failed");
         callback(err, object);
       });
     }
     else
-      callback(null);
+      callback('error', null);
   });
 }
 
@@ -85,9 +85,6 @@ function addUser(username, id, object, callback)
 //This function creates a user
 module.exports.add = function(username, password, avatar, callback)
 {
-  //console.log("Add: Checking user " + username);
-  if (!checkUser(username))
-  {
     //console.log("Add: Creating user " + username);
     //Generate an id
     let id = crypto.randomBytes(idSize).toString("hex");
@@ -97,6 +94,7 @@ module.exports.add = function(username, password, avatar, callback)
     //Add the username to the directory, using the id as a key.
     
     let key = username + id;
+    console.log("Hey juls, this is that thing " + key);
     client.hmset(username, {accountKey: key}, (err, obj) => {
       if (err) console.log("error in addUser(name): " + err);
     });
@@ -107,17 +105,9 @@ module.exports.add = function(username, password, avatar, callback)
     {
       if (err) console.log("error in addUser(object): " + err);
       //console.log("AddUser Right before callback");
-      callback(err, obj);
+      console.log("Test printing UserAccount:" + userAccount.id);
+      console.log("Test printing Object:" + obj);
+      callback(err, userAccount);
     });
-    //addUser(username, id, userAccount, (err, myNewUser) => {
-    //  if (err) console.log("error in user.add: " + err);
-    //  process.nextTick( () => { callback(err, myNewUser); } );
-    //});
-  }
-  else
-  {
-    console.log("User " + username + "exists.");
-    process.nextTick( () => { callback("error: existing user", null); } );
-  }
 }
 

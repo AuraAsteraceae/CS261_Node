@@ -62,13 +62,16 @@ function createUser(req, res)
     userAccounts.get(username, (err, obj) => {
       if (!obj)
       {
-        //console.log("Attempt to create user");
+        console.log("Attempt to create user");
         userAccounts.add(username, password, avatar, (err, userData) =>
         {
           if (err) console.log("createUser failed with: " + err);
-          if (userData)
+          else if(userData)
           {
             //console.log("Created user.");
+            console.log(JSON.stringify(userData));
+            console.log("Info: id " + userData.id);
+            console.log("Info: username " + userData.username);
             let response =
             {
               "status": "success",
