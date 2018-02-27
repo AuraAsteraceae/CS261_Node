@@ -62,16 +62,12 @@ function createUser(req, res)
     userAccounts.get(username, (err, obj) => {
       if (!obj)
       {
-        console.log("Attempt to create user");
+        console.log("Info: Create: Attempt to create user");
         userAccounts.add(username, password, avatar, (err, userData) =>
         {
-          if (err) console.log("createUser failed with: " + err);
+          if (err) console.log("Error: createUser failed with: " + err);
           else if(userData)
           {
-            //console.log("Created user.");
-            console.log(JSON.stringify(userData));
-            console.log("Info: id " + userData.id);
-            console.log("Info: username " + userData.username);
             let response =
             {
               "status": "success",
@@ -81,11 +77,11 @@ function createUser(req, res)
                 "username" : userData.username
               }
             }
-            console.log("Right before sending response. " + response);
             res.send(JSON.stringify(response));
           }
           else
           {
+            //You shouldn't get here.
             console.log("UserAccounts returned a value of: " +userData);
           }
         });
@@ -102,13 +98,12 @@ function createUser(req, res)
         }
         res.send(JSON.stringify(response));
       }
-    //console.log("User created: " + username);
-    console.log("Create User exiting"); 
+    console.log("Info: Create User exiting"); 
     });
   return;
   }
 
-  console.log("Create User failed");
+  console.log("Error: Create User failed");
 }
 
 function loginUser(req, res)
@@ -116,10 +111,10 @@ function loginUser(req, res)
   let username = checkField(req, 'username');
   let password = checkField(req, 'password');
   
-  console.log("Login Attempted: " + username);
+  console.log("Info: Login Attempted: " + username);
   
   userAccounts.get(username, (err, existingUser) => {
-    if (err) console.log("error in loginUser: " + err);
+    if (err) console.log("Error: error in loginUser: " + err);
     if (!existingUser)
     {
       console.log("Session failed with: " + username + " User did not exist");
@@ -159,12 +154,12 @@ function loginUser(req, res)
           }
         }
         res.send(JSON.stringify(response));
-        console.log("Login Success");
+        console.log("Info: Login Success");
       });
     }
   
   });
-  console.log("Login user function exited.");
+  console.log("Info: Login user function exited.");
 }
 
 function logoutUser(req, res, next)
@@ -189,7 +184,6 @@ function logoutUser(req, res, next)
 
   if (!existingSession)
   {
-    //console.log("Session doesn't exist");
     //Session does not exist
     let response =
     {
@@ -337,7 +331,7 @@ function updateUser(req, res, next)
   //user -> id
   //session -> token && session
   userAccounts.get(id, (err, user) => {
-      if (!user)
+    if (!user)
     {
       let response =
       {
@@ -348,7 +342,7 @@ function updateUser(req, res, next)
         }
       }
       res.send(JSON.stringify(response));
-      console.log("no user found");
+      console.log("Error: updateUser: no user found");
     }
     else
     {
@@ -364,7 +358,7 @@ function updateUser(req, res, next)
           }
         }
         res.send(JSON.stringify(response));
-        console.log("no session found");
+        console.log("Error: updateUser: no session found");
       }
       else
       {
@@ -386,10 +380,7 @@ function updateUser(req, res, next)
             {
               user.avatar = avatar;
               response.data.avatar = avatar;
-              console.log("REEEE");
             }
-            console.log("Oi this better print");
-            console.log(JSON.stringify(response));
             res.send(JSON.stringify(response));
             console.log("Success");
             //next();
@@ -406,7 +397,7 @@ function updateUser(req, res, next)
               }
             }
             res.send(JSON.stringify(response));
-            console.log("Incorrect old password");
+            console.log("Error: updateUser: Incorrect old password");
           }
         }
         else if (avatar)
@@ -422,7 +413,7 @@ function updateUser(req, res, next)
             }
           }
           res.send(JSON.stringify(response));
-          console.log("Just avatar change");
+          console.log("Info: updateUser: Just avatar change");
           //next();
         }
         else
@@ -437,14 +428,14 @@ function updateUser(req, res, next)
             }
           }
           res.send(JSON.stringify(response));
-          console.log("Nothing changed");
+          console.log("Info: updateUser: Nothing changed");
           //next();
         }
       }
     }
   });
   
-  console.log("UpdateUser Exited.");
+  console.log("Info: UpdateUser Exited.");
 }
 
 module.exports.register = function(app, root)

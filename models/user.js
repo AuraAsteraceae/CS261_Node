@@ -44,7 +44,6 @@ function getObjectFromInitialKey(t1Key, callback)
     {
       client.hgetall(key.accountKey, function(err, object)
       {
-        console.log("That long ass function" + key.accountKey);
         if (err)
           console.log("HGetAll from initial key failed");
         callback(err, object);
@@ -77,7 +76,6 @@ function addUser(username, id, object, callback)
   client.hmset(key, object, (err, obj) =>
   {
     if (err) console.log("error in addUser(object): " + err);
-    //console.log("AddUser Right before callback");
     callback(err, obj);
   });
 }
@@ -85,12 +83,11 @@ function addUser(username, id, object, callback)
 //This function creates a user
 module.exports.add = function(username, password, avatar, callback)
 {
-    //console.log("Add: Creating user " + username);
     //Generate an id
     let id = crypto.randomBytes(idSize).toString("hex");
     //Create the user account object
     let userAccount = new UserAccount(username, password, id, avatar);
-    //console.log("After user constructor");
+    
     //Add the username to the directory, using the id as a key.
     
     let key = username + id;
@@ -104,9 +101,6 @@ module.exports.add = function(username, password, avatar, callback)
     client.hmset(key, userAccount, (err, obj) =>
     {
       if (err) console.log("error in addUser(object): " + err);
-      //console.log("AddUser Right before callback");
-      console.log("Test printing UserAccount:" + userAccount.id);
-      console.log("Test printing Object:" + obj);
       callback(err, userAccount);
     });
 }
