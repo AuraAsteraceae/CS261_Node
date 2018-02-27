@@ -128,7 +128,7 @@ function loginUser(req, res)
     else if (existingUser.password !== password)
     {
       console.log("Session failed with: " + username + " Wrong password");
-      console.log("pass: "existingUser.password + ", passed in: " + password);
+      console.log("pass: " + existingUser.password + ", passed in: " + password);
       let response =
       {
         "status": "fail",
@@ -373,7 +373,8 @@ function updateUser(req, res, next)
             if (oldPassword === user.password)
             {
               console.log("Info: UPDATING PASSWORD. newPassword: " + newPassword);
-              user.password = newPassword;
+              //TODO: This
+
               console.log("Important: password is now: " + user.password);
               let response =
               {
