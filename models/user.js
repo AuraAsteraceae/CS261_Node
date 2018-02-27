@@ -77,6 +77,7 @@ function addUser(username, id, object, callback)
   client.hmset(key, object, (err, obj) =>
   {
     if (err) console.log("error in addUser(object): " + err);
+    //console.log("AddUser Right before callback");
     callback(err, obj);
   });
 }
@@ -84,7 +85,7 @@ function addUser(username, id, object, callback)
 //This function creates a user
 module.exports.add = function(username, password, avatar, callback)
 {
-  console.log("Add: Checking user " + username);
+  //console.log("Add: Checking user " + username);
   if (!checkUser(username))
   {
     //console.log("Add: Creating user " + username);
@@ -92,14 +93,17 @@ module.exports.add = function(username, password, avatar, callback)
     let id = crypto.randomBytes(idSize).toString("hex");
     //Create the user account object
     let userAccount = new UserAccount(username, password, id, avatar);
-    console.log("After user constructor");
+    //console.log("After user constructor");
     //Add the username to the directory, using the id as a key.
     addUser(username, id, userAccount, (err, myNewUser) => {
       if (err) console.log("error in user.add: " + err);
-      process.nextTick( () => { callback(myNewUser); } );
+      process.nextTick( () => { callback(err, myNewUser); } );
     });
   }
   else
+  {
     console.log("User " + username + "exists.");
+    process.nextTick( () => { callback("error: existing user", null); } );
+  }
 }
 

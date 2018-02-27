@@ -63,10 +63,12 @@ function createUser(req, res)
       if (!obj)
       {
         //console.log("Attempt to create user");
-        userAccounts.add(username, password, avatar, function(err, userData)
+        userAccounts.add(username, password, avatar, (err, userData) =>
         {
-          if (!err)
+          if (err) console.log("createUser failed with: " + err);
+          if (userData)
           {
+            //console.log("Created user.");
             let response =
             {
               "status": "success",
@@ -76,7 +78,12 @@ function createUser(req, res)
                 "username" : userData.username
               }
             }
+            console.log("Right before sending response. " + response);
             res.send(JSON.stringify(response));
+          }
+          else
+          {
+            console.log("UserAccounts returned a value of: " +userData);
           }
         });
       }
@@ -93,12 +100,12 @@ function createUser(req, res)
         res.send(JSON.stringify(response));
       }
     //console.log("User created: " + username);
-    
+    console.log("Create User exiting"); 
     });
   return;
   }
 
-  //console.log("Create User failed");
+  console.log("Create User failed");
 }
 
 function loginUser(req, res)
@@ -109,6 +116,7 @@ function loginUser(req, res)
   console.log("Login Attempted: " + username);
   
   userAccounts.get(username, (err, existingUser) => {
+    if (err) console.log("error in loginUser: " + err);
     if (!existingUser)
     {
       console.log("Session failed with: " + username + " User did not exist");
