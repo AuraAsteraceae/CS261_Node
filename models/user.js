@@ -95,10 +95,24 @@ module.exports.add = function(username, password, avatar, callback)
     let userAccount = new UserAccount(username, password, id, avatar);
     //console.log("After user constructor");
     //Add the username to the directory, using the id as a key.
-    addUser(username, id, userAccount, (err, myNewUser) => {
-      if (err) console.log("error in user.add: " + err);
-      process.nextTick( () => { callback(err, myNewUser); } );
+    
+    let key = username + id;
+    client.hmset(username, {accountKey: key}, (err, obj) => {
+      if (err) console.log("error in addUser(name): " + err);
     });
+    client.hmset(id, {accountKey: key}, (err, obj) => {
+      if (err) console.log("error in addUser(id): " + err);
+    });
+    client.hmset(key, object, (err, obj) =>
+    {
+      if (err) console.log("error in addUser(object): " + err);
+      //console.log("AddUser Right before callback");
+      callback(err, obj);
+    });
+    //addUser(username, id, userAccount, (err, myNewUser) => {
+    //  if (err) console.log("error in user.add: " + err);
+    //  process.nextTick( () => { callback(err, myNewUser); } );
+    //});
   }
   else
   {
