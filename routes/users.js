@@ -367,32 +367,32 @@ function updateUser(req, res, next)
         {
           if (oldPassword)
           {
-            console.log("Info: user.password = " + user.password);
-            console.log("Info: oldPassword = " + oldPassword);
-            console.log("Info: newPassword = " + newPassword); 
             if (oldPassword === user.password)
             {
-              console.log("Info: UPDATING PASSWORD. newPassword: " + newPassword);
-              //TODO: This
-
-              console.log("Important: password is now: " + user.password);
-              let response =
+              userAccounts.updateUser(user.username, newPassword, id, user.avatar, (err, status) =>
               {
-                "status": "success",
-                "data":
+                if (err) console.log("Error: updateUser password change: could not update. " + err);
+                let response =
                 {
-                  "passwordChanged": true,
-                  "avatar": user.avatar
+                  "status": "success",
+                  "data":
+                  {
+                    "passwordChanged": true,
+                    "avatar": user.avatar
+                  }
                 }
-              }
-              if (avatar)
-              {
-                user.avatar = avatar;
-                response.data.avatar = avatar;
-              }
-              res.send(JSON.stringify(response));
-              console.log("Success");
-              //next();
+                if (avatar)
+                {
+                  userAccounts.updateUser(user.username, newPassword, id, avatar, (err, status) =>
+                  {
+                    if (err) console.log("Error: updateUser avatar & password. " + err);
+                    response.data.avatar = avatar;
+                  });
+                }
+                res.send(JSON.stringify(response));
+                console.log("Success");
+                //next();
+              });
             }
             else
             {

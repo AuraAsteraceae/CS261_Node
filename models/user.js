@@ -88,3 +88,15 @@ module.exports.add = function(username, password, avatar, callback)
     });
 }
 
+module.exports.updateUser = function(username, password, id, avatar, callback)
+{
+    let userAccount = new UserAccount(username, password, id, avatar);
+    
+    let key = username + id;
+    client.hmset(key, userAccount, (err, obj) =>
+    {
+      if (err) console.log("error in updateUser: " + err);
+      callback(err, userAccount);
+    });
+}
+
