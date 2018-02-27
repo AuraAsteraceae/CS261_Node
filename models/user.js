@@ -10,13 +10,13 @@ let idSize = 8;
 //User account definition
 class UserAccount
 {
-	constructor(username, password, id, avatar)
-	{
-		this.username = username;
-		this.password = password;
-		this.id = id;
-		this.avatar = avatar;
-	}
+  constructor(username, password, id, avatar)
+  {
+    this.username = username;
+    this.password = password;
+    this.id = id;
+    this.avatar = avatar;
+  }
 }
 
 function checkUser(username)
@@ -59,7 +59,7 @@ function getObjectFromInitialKey(t1Key, callback)
 //If one is present, returns it.
 module.exports.get = function(username, callback)
 {
-	getObjectFromInitialKey(username, (err, user) => {
+  getObjectFromInitialKey(username, (err, user) => {
     if (err) console.log("error in user.get: " + err);
     callback(err, user);
   });
@@ -84,22 +84,22 @@ function addUser(username, id, object, callback)
 //This function creates a user
 module.exports.add = function(username, password, avatar, callback)
 {
-	console.log("Add: Checking user " + username);
-	if (!checkUser(username))
-	{
-		//console.log("Add: Creating user " + username);
-		//Generate an id
-		let id = crypto.randomBytes(idSize).toString("hex");
-		//Create the user account object
-		let userAccount = new UserAccount(username, password, id, avatar);
+  console.log("Add: Checking user " + username);
+  if (!checkUser(username))
+  {
+    //console.log("Add: Creating user " + username);
+    //Generate an id
+    let id = crypto.randomBytes(idSize).toString("hex");
+    //Create the user account object
+    let userAccount = new UserAccount(username, password, id, avatar);
     console.log("After user constructor");
-		//Add the username to the directory, using the id as a key.
-		addUser(username, id, userAccount, (err, myNewUser) => {
+    //Add the username to the directory, using the id as a key.
+    addUser(username, id, userAccount, (err, myNewUser) => {
       if (err) console.log("error in user.add: " + err);
       process.nextTick( () => { callback(myNewUser); } );
     });
-	}
-	else
-		console.log("User " + username + "exists.");
+  }
+  else
+    console.log("User " + username + "exists.");
 }
 

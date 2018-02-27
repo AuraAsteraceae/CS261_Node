@@ -1,14 +1,18 @@
+//Includes
+const redis = require('redis');
+const client = redis.createClient();
+
 let crypto = require("crypto");
 let tokenSize = 6;
 
 class Session
 {
-	constructor(id, token, time)
-	{
-		this.id = id;
-		this.token = token;
-		this.time = time;
-	}
+  constructor(id, token, time)
+  {
+    this.id = id;
+    this.token = token;
+    this.time = time;
+  }
 }
 
 //let activeSessions = {};
@@ -18,14 +22,14 @@ function startSession(id, callback)
   //console.log("StartSession Start");
   //if (!findSession(id))
   //{
-  	let sessionID = crypto.randomBytes(tokenSize).toString("hex");
-  	let token = crypto.randomBytes(tokenSize).toString("hex");
-  	//Implement this properly later.
-  	//let date = new Date();
-  	let time = 0;
-  	let session = new Session(sessionID, token, time);
-  	//activeSessions[id] = session;
-  	client.hmset(id, session, (err, obj) =>
+    let sessionID = crypto.randomBytes(tokenSize).toString("hex");
+    let token = crypto.randomBytes(tokenSize).toString("hex");
+    //Implement this properly later.
+    //let date = new Date();
+    let time = 0;
+    let session = new Session(sessionID, token, time);
+    //activeSessions[id] = session;
+    client.hmset(id, session, (err, obj) =>
     {
       if (err) console.log("error in startSession: " + err);
       console.log("StartSession Callback");
@@ -34,8 +38,8 @@ function startSession(id, callback)
   //}
   //else
   //{
-  	//Session already exists but make a new one cuz dumb.
-  	
+    //Session already exists but make a new one cuz dumb.
+    
   //}
   //console.log("StartSession End");
 }
