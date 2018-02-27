@@ -23,7 +23,7 @@ function checkUser(username)
 {
   client.hgetall(username, (err, found) =>
   {
-    if (err) console.log("error in checkUser: " + err);
+    if (err) console.log("Error: checkUser: not found " + err);
     if (found) return true;
     else return false;
   });
@@ -42,7 +42,7 @@ function getObjectFromInitialKey(t1Key, callback)
   {
     if (key && key.accountKey)
     {
-      client.hgetall(key.accountKey, function(err, object)
+      client.hgetall(key.accountKey, (err, object) =>
       {
         if (err)
           console.log("HGetAll from initial key failed");
@@ -59,7 +59,7 @@ function getObjectFromInitialKey(t1Key, callback)
 module.exports.get = function(username, callback)
 {
   getObjectFromInitialKey(username, (err, user) => {
-    if (err) console.log("error in user.get: " + err);
+    if (err) console.log("Error: in user.get: " + err);
     callback(err, user);
   });
 }
@@ -91,7 +91,6 @@ module.exports.add = function(username, password, avatar, callback)
     //Add the username to the directory, using the id as a key.
     
     let key = username + id;
-    console.log("Hey juls, this is that thing " + key);
     client.hmset(username, {accountKey: key}, (err, obj) => {
       if (err) console.log("error in addUser(name): " + err);
     });

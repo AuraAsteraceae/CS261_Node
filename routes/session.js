@@ -58,7 +58,7 @@ function endSession(id, callback)
       let duration = 0;//currTime - session.time;//GetCurrTime
       //TODO: Delete but we don't need to atm.
       //delete session;
-      //client.hdel(id, function(err) {} );
+      client.hdel(id, function(err) {} );
       console.log("EndSession Callback");
       process.nextTick( () => {callback(duration); } );
     }
@@ -68,12 +68,11 @@ function endSession(id, callback)
 
 function findSession(id, callback)
 {
-  //console.log("FindSession Start");
-  //let found = activeSessions[id];
+  console.log("FindSession Start");
   client.hgetall(id, (err, object) =>
   {
-    if (err) console.log("error in findSession: " + err);
-    callback(object);
+    if (err) console.log("Error: findSession: " + err);
+    callback(err, object);
   });
 }
 
