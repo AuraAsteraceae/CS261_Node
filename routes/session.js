@@ -11,7 +11,7 @@ class Session
 	}
 }
 
-let activeSessions = {};
+//let activeSessions = {};
 
 function startSession(id, callback)
 {
@@ -24,9 +24,12 @@ function startSession(id, callback)
 		//let date = new Date();
 		let time = 0;
 		let session = new Session(sessionID, token, time);
-		activeSessions[id] = session;
+		//activeSessions[id] = session;
+		client.hmset(id, {activeSession: session}, function(err) 
+      {console.log("Session hmset error");}
+    );
 		console.log("StartSession Callback");
-		process.nextTick( () => {callback(activeSessions[id]); } );
+		process.nextTick( () => { callback(session); } );
 	//}
 	//else
 	//{
@@ -48,8 +51,8 @@ function endSession(id, callback)
 		//let currTime = currDate.getSeconds();
 		let duration = 0;//currTime - session.time;//GetCurrTime
 		
-		delete activeSessions[id];
-		activeSessions[id] = null;
+		delete session;
+		client.hdel(id, "activeSession",  function(err) {} );
 		console.log("EndSession Callback");
 		process.nextTick( () => {callback(duration); } );
 	}
@@ -59,17 +62,18 @@ function endSession(id, callback)
 function findSession(id)
 {
 	//console.log("FindSession Start");
-	let found = activeSessions[id];
-	if (found)
-	{
-		//console.log("FindSession Success");
-		return activeSessions[id];
-	}
-	else
-	{
-		//console.log("FindSession Fail");
-		return null;
-	}
+	//let found = activeSessions[id];
+	client.hgetall(id, function(err, object)
+  {
+    if (object)
+    {
+      return object;
+    }
+    else
+    {
+      return null;
+    }
+  });
 }
 
 module.exports.start = startSession;
