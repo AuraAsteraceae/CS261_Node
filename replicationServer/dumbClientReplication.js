@@ -24,10 +24,17 @@ exports.listen = (port, callback) => {
         let frame = TheSimulation.calculateFrame(elapsed);
 
         // TODO allocate buffer big enough for simulation frame
-        let buffer = Buffer.alloc(0);
+        let buffer = Buffer.alloc(32);
 
         // TODO serialize frame into buffer
-
+        //buffer.writeUInt8(frame[0].Id, 0);
+        //buffer.writeUInt8(frame[0].Player, 1);
+        //buffer.writeUInt8(frame[0].Type, 2);
+        buffer.writeDoubleLE(_lastTime, 0);
+        buffer.writeFloatLE(frame[0].Position[0], 8); //Same as below.
+        buffer.writeFloatLE(frame[0].Position[1], 12); //Cap this depending on world size
+        buffer.writeFloatLE(frame[0].Rotation, 16); //This could be a char
+        
         _replication.broadcast(buffer);
 
         _lastTime = now;
@@ -35,7 +42,11 @@ exports.listen = (port, callback) => {
 
     _replication.on('received', (player, data) => {
         // TODO: Parse received data to get player input
-        let playerInput = { };
+        let playerInput = {};
+        playerInput.Left = data & 1;
+        playerInput.Right = data & 2;
+        playerInput.Thrust = data & 4;
+        playerInput.Fire = data & 8;
 
         TheSimulation.acceptInput(player, playerInput);
     });
