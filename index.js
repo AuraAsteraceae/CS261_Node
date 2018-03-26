@@ -13,7 +13,7 @@ let logLevel    = process.env.NODE_LOG_LEVEL;
 let udpPort     = process.env.UDP_PORT;
 
 //Stupid env never works
-httpPort = 6379;
+httpPort = 6400; //Arbitrary value
 logLevel = 0;
 udpPort = 8123;
 

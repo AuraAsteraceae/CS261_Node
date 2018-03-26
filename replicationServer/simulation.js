@@ -46,21 +46,21 @@ exports.calculateFrame = (elapsed) => {
     let frameObjects = [];
     for (let obj of existingObjects)
     {
-        if (player.rot != 0)
+        if (obj.rot != 0)
         {
-            if (player.rot < 0)
+            if (obj.rot < 0)
             {
-                player.Rotation += (PlayerSpinDPS * elapsed);
+                obj.Rotation += (PlayerSpinDPS * elapsed);
             }
-            else if (player.rot > 0)
+            else if (obj.rot > 0)
             {
-                player.Rotation -= (PlayerSpinDPS * elapsed);
+                obj.Rotation -= (PlayerSpinDPS * elapsed);
             }
         }
-        if (player.thrust != 0)
+        if (obj.thrust != 0)
         {
-            player.Velocity[0] = Math.cos(player.Rotation * (180 / Math.PI)) * PlayerAcceleration * elapsed;
-            player.Velocity[1] = Math.sin(player.Rotation * (180 / Math.PI)) * PlayerAcceleration * elapsed;
+            obj.Velocity[0] = Math.cos(obj.Rotation * (180 / Math.PI)) * PlayerAcceleration * elapsed;
+            obj.Velocity[1] = Math.sin(obj.Rotation * (180 / Math.PI)) * PlayerAcceleration * elapsed;
         }
         
         obj.Position[0] = obj.Position[0] + (obj.Velocity[0] * elapsed);
