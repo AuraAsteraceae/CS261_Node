@@ -34,7 +34,11 @@ exports.listen = (port, callback) => {
         buffer.writeFloatLE(frame[0].Position[0], 8); //Same as below.
         buffer.writeFloatLE(frame[0].Position[1], 12); //Cap this depending on world size
         buffer.writeFloatLE(frame[0].Rotation, 16); //This could be a char
-        
+
+        console.log("Time: " + _lastTime);
+        console.log("Position: " + frame[0].Position);
+        console.log("Rotation: " + frame[0].Rotation);
+
         _replication.broadcast(buffer);
 
         _lastTime = now;
