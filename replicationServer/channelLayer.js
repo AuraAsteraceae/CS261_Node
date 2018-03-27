@@ -177,6 +177,7 @@ module.exports = class ChannelLayer extends EventEmitter {
             if (buffer.length >= netPayloadSerializer.getRequiredCapacity()) {
                 let payload = {};
                 let offset = netPayloadSerializer.deserialize(buffer, payload);
+                console.log("Payload: " + JSON.stringify(payload));
                 let data = null;
 
                 if (offset > 0)
