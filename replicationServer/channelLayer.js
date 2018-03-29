@@ -175,6 +175,7 @@ module.exports = class ChannelLayer extends EventEmitter {
 
         _transport.on('receive', (buffer, address, port) => {
             if (buffer.length >= netPayloadSerializer.getRequiredCapacity()) {
+                console.log("Got here.");
                 let payload = {};
                 let offset = netPayloadSerializer.deserialize(buffer, payload);
                 console.log("Payload: " + JSON.stringify(payload));

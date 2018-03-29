@@ -13,9 +13,9 @@ let logLevel    = process.env.NODE_LOG_LEVEL;
 let udpPort     = process.env.UDP_PORT;
 
 //Stupid env never works
-httpPort = 8128; //Arbitrary value
+httpPort = 80; //Arbitrary value
 logLevel = 0;
-udpPort = 8123;
+udpPort = 8128;
 
 const express = require('express');
 const path = require('path');
@@ -45,7 +45,7 @@ cache.connect({
 );
 
 //Fields
-//let port = 8123;
+let port = 8123;
 
 //Initialize the web server (with express)
 //let app = express();
@@ -57,7 +57,7 @@ app.use(bodyParser.json());
 routes.register(app);
 
 //Have the server listen on the specified port
-//app.listen(port);
+app.listen(port);
 
 const httpServer = app.listen(httpPort, (err) => {
   console.log("Node app " + __filename + " is listening on HTTP port " + httpPort + "!");
