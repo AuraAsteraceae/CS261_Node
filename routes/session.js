@@ -1,6 +1,7 @@
 //Includes
 const redis = require('redis');
 const client = redis.createClient();
+const mysql = require('mysql');
 
 let crypto = require("crypto");
 let tokenSize = 6;
@@ -15,6 +16,17 @@ class Session
   }
 }
 
+//MySQL Stuff
+//Hide this away somehow.
+//let dbusername = process.argv[2];
+//let dbuserpass = process.argv[3];
+//
+//let connection = mysql.createConnection(
+//{
+//  user: dbusername,
+//  password: dbuserpass
+//});
+
 //let activeSessions = {};
 
 function startSession(id, callback)
@@ -24,9 +36,7 @@ function startSession(id, callback)
   //{
     let sessionID = crypto.randomBytes(tokenSize).toString("hex");
     let token = crypto.randomBytes(tokenSize).toString("hex");
-    //Implement this properly later.
-    //let date = new Date();
-    let time = 0;
+    let time = Date.now();
     let session = new Session(sessionID, token, time);
     //activeSessions[id] = session;
     client.hmset(id, session, (err, obj) =>
@@ -35,12 +45,6 @@ function startSession(id, callback)
       console.log("StartSession Callback");
       process.nextTick( () => { callback(session); } );
     });
-  //}
-  //else
-  //{
-    //Session already exists but make a new one cuz dumb.
-    
-  //}
   //console.log("StartSession End");
 }
 
@@ -55,7 +59,7 @@ function endSession(id, callback)
       //Get time
       //let currDate = Date();
       //let currTime = currDate.getSeconds();
-      let duration = 0;//currTime - session.time;//GetCurrTime
+      let duration = (Date.now() - session.time) / 1000;//GetCurrTime
       //TODO: Delete but we don't need to atm.
       //delete session;
       client.hdel(id, function(err) {} );
