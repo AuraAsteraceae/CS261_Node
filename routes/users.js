@@ -1,6 +1,8 @@
 let userAccounts = require('./../models/user.js');
 let userSessions = require('./session.js');
 
+let crypto = require("crypto");
+
 //Helper function to check whether a given property is valid or not.
 function isValid(property)
 {
@@ -126,8 +128,13 @@ function loginUser(req, res)
         "reason": "Username/password mismatch"
       }
       res.send(JSON.stringify(response));
+      return;
     }
-    else if (existingUser.password !== password)
+    
+    let hashpassword = crypto.createHash('sha512')
+                   .update(existingUser.salt + password, 'utf8')
+                   .digest('hex');
+    if (existingUser.passwordhash !== hashpassword)
     {
       console.log("Session failed with: " + username + " Wrong password");
       console.log("pass: " + existingUser.password + ", passed in: " + password);
