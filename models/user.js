@@ -12,8 +12,8 @@ let idSize = 8;
 
 //MySQL Stuff
 //Hide this away somehow.
-let dbusername = process.argv[2];
-let dbuserpass = process.argv[3];
+let dbusername = "cs261-app";
+let dbuserpass = "CS261-DBUser";
 let dbip = "172.31.22.157"; //Private ip?
 
 let connection = mysql.createConnection(
@@ -22,6 +22,10 @@ let connection = mysql.createConnection(
   user: dbusername,
   password: dbuserpass
 });
+
+connection.connect();
+
+connection.query('USE masterroids');
 
 //User account definition
 class UserAccount
@@ -61,24 +65,24 @@ function checkField(req, name)
 
 function getObjectFromInitialKey(t1Key, callback)
 {
-  connection.query("SELECT * FROM user WHERE username=" + t1key + ";", 
+  connection.query("SELECT * FROM user WHERE username=" + t1Key + ";", 
   function (error, results, fields)
   {
-    if (error)
+    if (error || results.length === 0)
     {
       console.log("initial key failed username get " + error);
-      connection.query("SELECT * FROM user WHERE id=" + t1key + ";",
+      connection.query("SELECT * FROM user WHERE id=" + t1Key + ";",
       function (aError, aResults, aFields)
       {
-        if (error)
+        if (aError || aResults.length === 0)
         {
           console.log("initial key failed id get " + error);
           callback('error', null);
         }
-        else callback(err, aResults[0]);
+        else callback(error, aResults[0]);
       });
     }
-    else callback(err, results[0]);
+    else callback(error, results[0]);
   });
   //client.hgetall(t1Key, (err, key) =>
   //{
@@ -113,7 +117,7 @@ module.exports.add = function(username, password, avatar, callback)
 {
     //Generate an id
     //let id = crypto.randomBytes(idSize).toString("hex");
-    let id = uuidv1();
+    let id = uuid();
     //Create the user account object
     let userAccount = new UserAccount(username, password, id, avatar);
     
@@ -123,9 +127,8 @@ module.exports.add = function(username, password, avatar, callback)
                    .digest('hex');
     
     //Add the username to the directory, using the id as a key.
-    
-    connection.query("INSERT INTO `user` (id,username,passwordhash,salt,avatar_url) \
-    VALUES(" + id + "," + username + "," + hashpassword + "," + salt + "," + avatar + ")", 
+    console.log("AddUser: right before sql query");
+    connection.query("INSERT INTO user (id,username,passwordhash,salt,avatar_url) VALUES(" + id + "," + username + "," + hashpassword + "," + salt + "," + avatar + ");", 
     function (error, results, fields)
     {
         if (error) throw error;

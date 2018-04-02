@@ -23,10 +23,12 @@ function checkField(req, name)
 
 function createUser(req, res)
 {
+  console.log("CreateUser started");
   let username = checkField(req, 'username');
   let password = checkField(req, 'password');
   let avatar = checkField(req, 'avatar');
-  
+  console.log("Username: " + username);  
+
   //1. Validate input
   if (!isValid(username))
   {
