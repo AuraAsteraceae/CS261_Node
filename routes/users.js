@@ -261,7 +261,7 @@ function getUser(req, res, next)
           {
             "id": user.id,
             "username": user.username,
-            "avatar": user.avatar
+            "avatar": user.avatar_url
           }
         }
         res.send(JSON.stringify(response));
@@ -376,7 +376,10 @@ function updateUser(req, res, next)
         {
           if (oldPassword)
           {
-            if (oldPassword === user.password)
+            let hashpassword = crypto.createHash('sha512')
+                 .update(existingUser.salt + oldPassword, 'utf8')
+                 .digest('hex');
+            if (oldPassword === hashpassword)
             {
               userAccounts.updateUser(user.username, newPassword, id, user.avatar, (err, status) =>
               {
