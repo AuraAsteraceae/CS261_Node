@@ -128,11 +128,15 @@ module.exports.add = function(username, password, avatar, callback)
     
     //Add the username to the directory, using the id as a key.
     console.log("AddUser: right before sql query");
-    connection.query("INSERT INTO user (id,username,passwordhash,salt,avatar_url) \
-    VALUES(" + id + ",\"" + username + "\",\"" + hashpassword + "\",\"" + salt + "\",\"" + avatar + "\");", 
-    function (error, results, fields)
+    connection.query("INSERT INTO user (id,username,passwordhash,salt,avatar_url) VALUES(\"" + id + "\",\"" + username + "\",\"" + hashpassword + "\",\"" + salt + "\",\"" + avatar + "\");", 
+    function (err, results, fields)
     {
-        if (error) throw error;
+        console.log("AddUser: After sql query");
+        if (err)
+        {
+          console.log("error in AddUser: " + err);
+        }
+        console.log("AddUser: After error check, callback is next");
         callback(err, userAccount);
     });
     
@@ -159,7 +163,7 @@ module.exports.updateUser = function(username, password, id, avatar, callback)
     connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\";",
     function (error, results, fields)
     {
-        if (error) throw error;
+        if (error) console.log("Error in UpdateUser: " + error);
     });
     
     let userAccount = new UserAccount(username, password, id, avatar);
