@@ -423,9 +423,9 @@ function updateUser(req, res, next)
           }
           else if (avatar)
           {
-            userAccounts.updateUser(user.username, user.passwordhash, id, avatar, (err, status) =>
+            userAccounts.updateUser(user.username, oldPassword, id, avatar, (err, status) =>
             {
-              if (err) console.log("Error: updateUser avatar & password. " + err);
+              if (err) console.log("Error: updateUser avatar. " + err);
               response.data.avatar = avatar;
             });
             let response =

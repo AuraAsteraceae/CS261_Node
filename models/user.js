@@ -161,9 +161,9 @@ module.exports.updateUser = function(username, password, id, avatar, callback)
                    .update(salt + password, 'utf8')
                    .digest('hex');
     connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\", avatar_url = \"" + avatar + "\"WHERE id=\"" + id + "\";",
-    function (error, results, fields)
+    function (err, results, fields)
     {
-        if (error) console.log("Error in UpdateUser: " + error);
+        if (err) console.log("Error in UpdateUser: " + error);
         callback(err, results[0]);
     });
     
