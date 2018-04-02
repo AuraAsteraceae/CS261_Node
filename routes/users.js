@@ -137,7 +137,7 @@ function loginUser(req, res)
     if (existingUser.passwordhash !== hashpassword)
     {
       console.log("Session failed with: " + username + " Wrong password");
-      console.log("pass: " + existingUser.password + ", passed in: " + password);
+      console.log("pass: " + existingUser.passwordhash + ", hash passed in: " + hashpassword);
       let response =
       {
         "status": "fail",
