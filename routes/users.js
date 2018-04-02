@@ -390,7 +390,7 @@ function updateUser(req, res, next)
                   "data":
                   {
                     "passwordChanged": true,
-                    "avatar": user.avatar
+                    "avatar": user.avatar_url
                   }
                 }
                 if (avatar)
@@ -423,7 +423,11 @@ function updateUser(req, res, next)
           }
           else if (avatar)
           {
-            user.avatar = avatar;
+            userAccounts.updateUser(user.username, user.passwordhash, id, avatar, (err, status) =>
+            {
+              if (err) console.log("Error: updateUser avatar & password. " + err);
+              response.data.avatar = avatar;
+            });
             let response =
             {
               "status": "success",

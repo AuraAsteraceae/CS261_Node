@@ -160,14 +160,15 @@ module.exports.updateUser = function(username, password, id, avatar, callback)
     let hashpassword = crypto.createHash('sha512')
                    .update(salt + password, 'utf8')
                    .digest('hex');
-    connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\" WHERE id=\"" + id + "\";",
+    connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\", avatar_url = \"" + avatar + "\"WHERE id=\"" + id + "\";",
     function (error, results, fields)
     {
         if (error) console.log("Error in UpdateUser: " + error);
+        callback(err, results[0]);
     });
     
-    let userAccount = new UserAccount(username, password, id, avatar);
-    callback(err, userAccount);
+    //let userAccount = new UserAccount(username, password, id, avatar);
+    
     //let key = username + id;
     //client.hmset(key, userAccount, (err, obj) =>
     //{
