@@ -125,7 +125,7 @@ module.exports.add = function(username, password, avatar, callback)
     //Add the username to the directory, using the id as a key.
     
     connection.query("INSERT INTO `user` (id,username,passwordhash,salt,avatar_url) \
-    VALUES(" + id + "," + username + "," + hashpassword + "," + salt + "," + avatar")", 
+    VALUES(" + id + "," + username + "," + hashpassword + "," + salt + "," + avatar + ")", 
     function (error, results, fields)
     {
         if (error) throw error;
