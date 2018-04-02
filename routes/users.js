@@ -379,7 +379,7 @@ function updateUser(req, res, next)
             let hashpassword = crypto.createHash('sha512')
                  .update(user.salt + oldPassword, 'utf8')
                  .digest('hex');
-            if (oldPassword === hashpassword)
+            if (user.passwordhash === hashpassword)
             {
               userAccounts.updateUser(user.username, newPassword, id, user.avatar, (err, status) =>
               {
