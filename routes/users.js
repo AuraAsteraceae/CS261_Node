@@ -379,10 +379,12 @@ function updateUser(req, res, next)
             let hashpassword = crypto.createHash('sha512')
                  .update(user.salt + oldPassword, 'utf8')
                  .digest('hex');
+            console.log("Compare hashed passwords: " + user.passwordhash === hashpassword);
             if (user.passwordhash === hashpassword)
             {
               userAccounts.updateUser(user.username, newPassword, id, user.avatar, (err, status) =>
               {
+                console.log("UpdateUser returned: " + status);
                 if (err) console.log("Error: updateUser password change: could not update. " + err);
                 let response =
                 {
