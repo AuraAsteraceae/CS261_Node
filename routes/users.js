@@ -382,7 +382,7 @@ function updateUser(req, res, next)
             console.log("Compare hashed passwords: " + user.passwordhash === hashpassword);
             if (user.passwordhash === hashpassword)
             {
-              userAccounts.updateUser(user.username, newPassword, id, user.avatar, (err, status) =>
+              userAccounts.updateUser(user.username, newPassword, id, user.avatar_url, (err, status) =>
               {
                 console.log("UpdateUser returned: " + status);
                 if (err) console.log("Error: updateUser password change: could not update. " + err);
