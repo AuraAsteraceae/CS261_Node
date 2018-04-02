@@ -160,7 +160,7 @@ module.exports.updateUser = function(username, password, id, avatar, callback)
     let hashpassword = crypto.createHash('sha512')
                    .update(salt + password, 'utf8')
                    .digest('hex');
-    connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\";",
+    connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\" WHERE id=\"" + id + "\";",
     function (error, results, fields)
     {
         if (error) console.log("Error in UpdateUser: " + error);
