@@ -41,7 +41,7 @@ class UserAccount
 
 function checkUser(username)
 {
-    connection.query("SELECT * FROM user WHERE username=" + username + ";", 
+    connection.query("SELECT * FROM user WHERE username=\"" + username + "\";", 
     function (error, results, fields)
     {
         if (error) console.log("Error: checkUser: not found " + err);
@@ -65,13 +65,13 @@ function checkField(req, name)
 
 function getObjectFromInitialKey(t1Key, callback)
 {
-  connection.query("SELECT * FROM user WHERE username=" + t1Key + ";", 
+  connection.query("SELECT * FROM user WHERE username=\"" + t1Key + "\";", 
   function (error, results, fields)
   {
     if (error || results.length === 0)
     {
       console.log("initial key failed username get " + error);
-      connection.query("SELECT * FROM user WHERE id=" + t1Key + ";",
+      connection.query("SELECT * FROM user WHERE id=\"" + t1Key + "\";",
       function (aError, aResults, aFields)
       {
         if (aError || aResults.length === 0)
@@ -128,7 +128,8 @@ module.exports.add = function(username, password, avatar, callback)
     
     //Add the username to the directory, using the id as a key.
     console.log("AddUser: right before sql query");
-    connection.query("INSERT INTO user (id,username,passwordhash,salt,avatar_url) VALUES(" + id + "," + username + "," + hashpassword + "," + salt + "," + avatar + ");", 
+    connection.query("INSERT INTO user (id,username,passwordhash,salt,avatar_url) \
+    VALUES(" + id + ",\"" + username + "\",\"" + hashpassword + "\",\"" + salt + "\",\"" + avatar + "\");", 
     function (error, results, fields)
     {
         if (error) throw error;
@@ -155,7 +156,7 @@ module.exports.updateUser = function(username, password, id, avatar, callback)
     let hashpassword = crypto.createHash('sha512')
                    .update(salt + password, 'utf8')
                    .digest('hex');
-    connection.query("UPDATE `user` SET passwordhash = " + hashpassword + ", salt = " + salt + ";",
+    connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\";",
     function (error, results, fields)
     {
         if (error) throw error;
