@@ -8,7 +8,7 @@ let tokenSize = 6;
 
 class Session
 {
-  constructor(id, token, time)
+  constructor(id, token)//, time)
   {
     this.id = id;
     this.token = token;
@@ -43,6 +43,8 @@ function startSession(id, callback)
     let sessionID = crypto.randomBytes(tokenSize).toString("hex");
     let token = crypto.randomBytes(tokenSize).toString("hex");
     
+    let session = new Session(sessionID, token);//, time);
+    
     connection.query("INSERT INTO sessions (id,token) VALUES(\"" + sessionID + "\",\"" + token + "\");", 
     function (err, results, fields)
     {
@@ -51,10 +53,10 @@ function startSession(id, callback)
           console.log("error in startSession: " + err);
         }
         console.log("AddUser: After error check, callback is next");
-        callback(err, results[0]);
+        callback(err, session);
     });
     //let time = Date.now();
-    //let session = new Session(sessionID, token, time);
+    
     //activeSessions[id] = session;
     //client.hmset(id, session, (err, obj) =>
     //{
