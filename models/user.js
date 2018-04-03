@@ -106,6 +106,10 @@ module.exports.get = function(username, callback)
 {
   getObjectFromInitialKey(username, (err, user) => {
     if (err) console.log("Error: in user.get: " + err);
+    console.log("GetUser: " + user.username);
+    console.log("salt: " + user.salt);
+    console.log("hashedpassword: " + user.passwordhash);
+    console.log("id: " + user.id);
     callback(err, user);
   });
 }
@@ -125,6 +129,11 @@ module.exports.add = function(username, password, avatar, callback)
     let hashpassword = crypto.createHash('sha512')
                    .update(salt + password, 'utf8')
                    .digest('hex');
+                   
+    console.log("AddUser: " + username);
+    console.log("salt: " + salt);
+    console.log("hashedpassword: " + hashpassword);
+    console.log("password: " + password);
     
     //Add the username to the directory, using the id as a key.
     console.log("AddUser: right before sql query");
