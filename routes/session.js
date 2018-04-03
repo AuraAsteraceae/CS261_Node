@@ -18,8 +18,9 @@ class Session
 
 //MySQL Stuff
 //Hide this away somehow.
-let dbusername = process.argv[2];
-let dbuserpass = process.argv[3];
+let dbusername = "cs261-app";
+let dbuserpass = "CS261-DBUser";
+let dbip = "172.31.22.157"; //Private ip?
 
 let connection = mysql.createConnection(
 {
