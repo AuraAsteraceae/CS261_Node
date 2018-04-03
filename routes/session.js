@@ -45,7 +45,7 @@ function startSession(id, callback)
     
     let session = new Session(sessionID, token);//, time);
     
-    connection.query("INSERT INTO sessions (id,token) VALUES(\"" + sessionID + "\",\"" + token + "\");", 
+    connection.query("INSERT INTO sessions (keyID,id,token) VALUES(\"" + id + "\",\"" + sessionID + "\",\"" + token + "\");", 
     function (err, results, fields)
     {
         if (err)
@@ -53,7 +53,7 @@ function startSession(id, callback)
           console.log("error in startSession: " + err);
         }
         console.log("AddUser: After error check, callback is next");
-        callback(err, session);
+        process.nextTick( () => { callback(session); } );
     });
     //let time = Date.now();
     
