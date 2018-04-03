@@ -91,7 +91,7 @@ function findSession(id, callback)
 {
   console.log("FindSession Start");
   
-  connection.query("SELECT * FROM sessions WHERE id=\"" + id + "\";", 
+  connection.query("SELECT * FROM sessions WHERE keyID=\"" + id + "\";", 
   function (error, results, fields)
   {
     if (error || results.length === 0)
