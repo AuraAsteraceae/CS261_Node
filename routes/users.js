@@ -390,7 +390,7 @@ function updateUser(req, res, next)
             console.log("Alert!: newPassword: " + newPassword);
             if (user.passwordhash === hashpassword)
             {
-              userAccounts.updateUser(user.username, newPassword, id, user.avatar_url, (err, status) =>
+              userAccounts.updatePassword(user.id, newPassword, (err, status) =>
               {
                 console.log("UpdateUser returned: " + status);
                 if (err) console.log("Error: updateUser password change: could not update. " + err);
@@ -405,7 +405,7 @@ function updateUser(req, res, next)
                 }
                 if (avatar)
                 {
-                  userAccounts.updateUser(user.username, newPassword, id, avatar, (err, status) =>
+                  userAccounts.updateAvatar(user.id, avatar, (err, status) =>
                   {
                     if (err) console.log("Error: updateUser avatar & password. " + err);
                     response.data.avatar = avatar;
@@ -433,7 +433,7 @@ function updateUser(req, res, next)
           }
           else if (avatar)
           {
-            userAccounts.updateUser(user.username, oldPassword, id, avatar, (err, status) =>
+            userAccounts.updateAvatar(user.id, avatar, (err, status) =>
             {
               if (err) console.log("Error: updateUser avatar. " + err);
               response.data.avatar = avatar;

@@ -189,3 +189,36 @@ module.exports.updateUser = function(username, password, id, avatar, callback)
     //});
 }
 
+module.exports.updatePassword = function(id, password, callback)
+{
+    let salt = Math.round((Date.now() * Math.random())) + '';
+    let hashpassword = crypto.createHash('sha512')
+                   .update(salt + password, 'utf8')
+                   .digest('hex');
+    connection.query("UPDATE `user` SET passwordhash = \"" + hashpassword + "\", salt = \"" + salt + "\"WHERE id=\"" + id + "\";",
+    function (err, results, fields)
+    {
+        if (err) console.log("Error in UpdateUser: " + error);
+        else 
+        {
+            console.log("updatePassword: Password updated to " + password);
+            console.log("updatePassword: hash updated to " + hashpassword);
+        }
+        callback(err, results[0]);
+    });
+}
+
+module.exports.updateAvatar = function(id, avatar, callback)
+{
+    connection.query("UPDATE `user` SET avatar_url = \"" + avatar + "\"WHERE id=\"" + id + "\";",
+    function (err, results, fields)
+    {
+        if (err) console.log("Error in UpdateUser: " + error);
+        else 
+        {
+            console.log("updateAvatar: Avatar updated to " + avatar);
+        }
+        callback(err, results[0]);
+    });
+}
+
