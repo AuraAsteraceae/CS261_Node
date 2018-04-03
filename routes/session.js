@@ -12,20 +12,25 @@ class Session
   {
     this.id = id;
     this.token = token;
-    this.time = time;
+    //this.time = time;
   }
 }
 
 //MySQL Stuff
 //Hide this away somehow.
-//let dbusername = process.argv[2];
-//let dbuserpass = process.argv[3];
-//
-//let connection = mysql.createConnection(
-//{
-//  user: dbusername,
-//  password: dbuserpass
-//});
+let dbusername = process.argv[2];
+let dbuserpass = process.argv[3];
+
+let connection = mysql.createConnection(
+{
+  host: dbip,
+  user: dbusername,
+  password: dbuserpass
+});
+
+connection.connect();
+
+connection.query('USE masterroids');
 
 //let activeSessions = {};
 
@@ -36,15 +41,26 @@ function startSession(id, callback)
   //{
     let sessionID = crypto.randomBytes(tokenSize).toString("hex");
     let token = crypto.randomBytes(tokenSize).toString("hex");
-    let time = Date.now();
-    let session = new Session(sessionID, token, time);
-    //activeSessions[id] = session;
-    client.hmset(id, session, (err, obj) =>
+    
+    connection.query("INSERT INTO sessions (id,token) VALUES(\"" + sessionID + "\",\"" + token + "\");", 
+    function (err, results, fields)
     {
-      if (err) console.log("error in startSession: " + err);
-      console.log("StartSession Callback");
-      process.nextTick( () => { callback(session); } );
+        if (err)
+        {
+          console.log("error in startSession: " + err);
+        }
+        console.log("AddUser: After error check, callback is next");
+        callback(err, results[0]);
     });
+    //let time = Date.now();
+    //let session = new Session(sessionID, token, time);
+    //activeSessions[id] = session;
+    //client.hmset(id, session, (err, obj) =>
+    //{
+    //  if (err) console.log("error in startSession: " + err);
+    //  console.log("StartSession Callback");
+    //  process.nextTick( () => { callback(session); } );
+    //});
   //console.log("StartSession End");
 }
 
@@ -59,10 +75,8 @@ function endSession(id, callback)
       //Get time
       //let currDate = Date();
       //let currTime = currDate.getSeconds();
-      let duration = (Date.now() - session.time) / 1000;//GetCurrTime
-      //TODO: Delete but we don't need to atm.
-      //delete session;
-      client.hdel(id, function(err) {} );
+      let duration = 0;//(Date.now() - session.time) / 1000;//GetCurrTime
+      //client.hdel(id, function(err) {} );
       console.log("EndSession Callback");
       process.nextTick( () => {callback(duration); } );
     }
@@ -73,11 +87,21 @@ function endSession(id, callback)
 function findSession(id, callback)
 {
   console.log("FindSession Start");
-  client.hgetall(id, (err, object) =>
+  
+  connection.query("SELECT * FROM sessions WHERE id=\"" + id + "\";", 
+  function (error, results, fields)
   {
-    if (err) console.log("Error: findSession: " + err);
-    callback(err, object);
+    if (error || results.length === 0)
+    {
+      console.log("findSession failed with: " + error);
+    }
+    else callback(error, results[0]);
   });
+  //client.hgetall(id, (err, object) =>
+  //{
+  //  if (err) console.log("Error: findSession: " + err);
+  //  callback(err, object);
+  //});
 }
 
 module.exports.start = startSession;
