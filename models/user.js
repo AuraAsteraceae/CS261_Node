@@ -106,10 +106,13 @@ module.exports.get = function(username, callback)
 {
   getObjectFromInitialKey(username, (err, user) => {
     if (err) console.log("Error: in user.get: " + err);
-    console.log("GetUser: " + user.username);
-    console.log("salt: " + user.salt);
-    console.log("hashedpassword: " + user.passwordhash);
-    console.log("id: " + user.id);
+    if (user)
+    {
+        console.log("GetUser: " + user.username);
+        console.log("salt: " + user.salt);
+        console.log("hashedpassword: " + user.passwordhash);
+        console.log("id: " + user.id); 
+    }
     callback(err, user);
   });
 }
