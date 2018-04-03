@@ -376,10 +376,18 @@ function updateUser(req, res, next)
         {
           if (oldPassword)
           {
+            console.log("Info: UserFields: " + user.username);
+            console.log("salt: " + user.salt);
+            console.log("hashedpassword: " + user.passwordhash);
+            console.log("id: " + user.id);
+
             let hashpassword = crypto.createHash('sha512')
                  .update(user.salt + oldPassword, 'utf8')
                  .digest('hex');
-            console.log("Compare hashed passwords: " + user.passwordhash === hashpassword);
+            console.log("Password Check Info: Checking from oldPassword.");
+            console.log("hashedpassword: " + hashpassword);
+            console.log("Alert!: oldPassword: " + oldPassword);
+            console.log("Alert!: newPassword: " + newPassword);
             if (user.passwordhash === hashpassword)
             {
               userAccounts.updateUser(user.username, newPassword, id, user.avatar_url, (err, status) =>

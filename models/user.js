@@ -108,10 +108,10 @@ module.exports.get = function(username, callback)
     if (err) console.log("Error: in user.get: " + err);
     if (user)
     {
-        console.log("GetUser: " + user.username);
-        console.log("salt: " + user.salt);
-        console.log("hashedpassword: " + user.passwordhash);
-        console.log("id: " + user.id); 
+        //console.log("GetUser: " + user.username);
+        //console.log("salt: " + user.salt);
+        //console.log("hashedpassword: " + user.passwordhash);
+        //console.log("id: " + user.id); 
     }
     callback(err, user);
   });
@@ -136,7 +136,7 @@ module.exports.add = function(username, password, avatar, callback)
     console.log("AddUser: " + username);
     console.log("salt: " + salt);
     console.log("hashedpassword: " + hashpassword);
-    console.log("password: " + password);
+    console.log("Alert!: password: " + password);
     
     //Add the username to the directory, using the id as a key.
     console.log("AddUser: right before sql query");
