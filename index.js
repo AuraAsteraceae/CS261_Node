@@ -2,9 +2,9 @@
 //let express = require('express');
 let routes = require('./routes/routes.js');
 
-let cache = require('./utils/cache');
-let redis = require('redis');
-let client = redis.createClient(); //creates a new client.
+//let cache = require('./utils/cache');
+//let redis = require('redis');
+//let client = redis.createClient(); //creates a new client.
 
 //For assignment 4
 require('dotenv').config();
@@ -13,7 +13,7 @@ let logLevel    = process.env.NODE_LOG_LEVEL;
 let udpPort     = process.env.UDP_PORT;
 
 //Stupid env never works
-httpPort = 80; //Arbitrary value
+httpPort = 8123; //Arbitrary value
 logLevel = 0;
 udpPort = 8128;
 
@@ -35,6 +35,7 @@ app.use(cookieParser());
 app.use(jsonUtils.requestMiddleware);
 app.use(jsonUtils.responseMiddleware);
 
+/*
 cache.connect({
   'host': "127.0.0.1",
   'port': "6379"
@@ -43,6 +44,7 @@ cache.connect({
    Console.log("Error: Connection error.")
   }
 );
+*/
 
 //Fields
 let port = 8123;
@@ -57,7 +59,7 @@ app.use(bodyParser.json());
 routes.register(app);
 
 //Have the server listen on the specified port
-app.listen(port);
+//app.listen(port);
 
 const httpServer = app.listen(httpPort, (err) => {
   console.log("Node app " + __filename + " is listening on HTTP port " + httpPort + "!");
